@@ -63,14 +63,14 @@ async def deobfuscate_code(source_code: str, method: str, keywords: list = None,
 
 class CustomDeobfModal(discord.ui.Modal, title="Custom Deobfuscation Options"):
     keywords_input = discord.ui.TextInput(
-        label="Keywords to search for (comma-separated)",
+        label="Keywords (comma-separated)",
         placeholder="e.g., player, game, print",
         required=False,
         max_length=500
     )
     techniques_input = discord.ui.TextInput(
-        label="Techniques to apply (comma-separated, e.g., hex_decode)",
-        placeholder="Available: hex_decode, basic_string_concat (more to come)",
+        label="Techniques (comma-separated)",
+        placeholder="Available: hex_decode, basic_string_concat",
         required=False,
         max_length=500
     )
