@@ -164,7 +164,7 @@ async def on_message(message: discord.Message):
         return
 
     user_id = message.author.id
-    if user_id in bot.waiting_for_url and message.channel.id == bot.bot.waiting_for_url[user_id]["channel_id"]:
+    if user_id in bot.waiting_for_url and message.channel.id == bot.waiting_for_url[user_id]["channel_id"]:
         url = message.content.strip()
         method = bot.waiting_for_url[user_id]["method"]
         keywords = bot.waiting_for_url[user_id].get("keywords")
