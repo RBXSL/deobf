@@ -70,7 +70,7 @@ def deobf_moonsec_v3(code: str) -> str:
     """
     Placeholder for Moonsec v3 deobfuscation logic.
     Real Moonsec v3 deobfuscation is complex and often involves bytecode analysis or specific VM understanding.
-    This function currently applies basic formatting and common cleanup patterns.
+    This function currently applies basic formatting and common cleanup patterns like hex decoding.
     """
     cleaned_code = beautify_lua(code)
 
@@ -111,8 +111,10 @@ def deobf_luraph(code: str) -> str:
 def deobf_custom(code: str, keywords: list = None, techniques: list = None) -> str:
     """
     Applies custom deobfuscation logic based on selected techniques and searches for keywords.
-    Currently supports: 'hex_decode', 'basic_string_concat', and 'xor_decode' (placeholder).
-    More advanced techniques (VM, function tables) would require dedicated parsers/engines.
+    Currently supports: 'hex_decode', 'basic_string_concat', and a basic 'xor_decode' pattern.
+    More advanced techniques (VM, function tables, control flow flattening) would require
+    dedicated Lua parsers, AST manipulation, or even VM emulation, and are beyond the scope
+    of simple regex-based replacements.
     """
     output = [f"--- Custom Deobfuscation ---"]
     output.append(f"Selected techniques: {', '.join(techniques) if techniques else 'None specified'}")
@@ -130,20 +132,38 @@ def deobf_custom(code: str, keywords: list = None, techniques: list = None) -> s
                 except:
                     return match.group(0)
             cleaned_code = re.sub(r'\\x([0-9a-fA-F]{2})', decode_hex_string, cleaned_code)
-            output.append("- Applied basic hex decoding.")
+            output.append("- Applied basic hex decoding (`\\xXX` patterns).")
 
         if "basic_string_concat" in techniques:
             # Example: "a" .. "b" -> "ab"
-            # This is a simple regex and won't handle all cases (e.g., variables)
-            cleaned_code = re.sub(r'"(.*?)"\s*\.\.\s*"(.*?)"', r'"\1\2"', cleaned_code)
-            output.append("- Applied basic string concatenation resolution.")
+            # This is a simple regex and won't handle all complex cases (e.g., variables, nested concats)
+            cleaned_code = re.sub(r'\"(.*?)\"\s*\.\.\s*\"(.*?)\"', r'"\1\2"', cleaned_code)
+            output.append("- Applied basic string concatenation resolution (`\"a\" .. \"b\"`).")
 
         if "xor_decode" in techniques:
-            # Placeholder for XOR decoding. This is highly dependent on the specific XOR pattern (key, loop, etc.)
-            # A real implementation would need to parse the XOR logic.
-            output.append("- Attempted XOR decoding (placeholder: needs specific XOR logic).")
+            # This is a very basic XOR decoding example.
+            # Real XOR deobfuscation is highly specific to the obfuscator's implementation (key, pattern).
+            # This attempts to find patterns like '\xHH\xHH' and XOR them with a guessed key (e.g., 0xAC)
+            # A more robust solution would require analyzing the XOR logic in the obfuscated code.
 
-        # Add more custom technique placeholders here
+            def decode_xor_string(match):
+                hex_encoded_bytes = match.group(0) # e.g., '\xAB\xCD'
+                try:
+                    byte_string = hex_encoded_bytes.encode('latin1').decode('unicode_escape').encode('latin1')
+                    # Example: Try XORing with a common single-byte key, or a simple repeating pattern
+                    # For demonstration, let's assume a key of 0xAC (172)
+                    key = 0xAC
+                    decoded_bytes = bytes([b ^ key for b in byte_string])
+                    return decoded_bytes.decode('utf-8', errors='ignore')
+                except Exception:
+                    return match.group(0) # Return original if decoding fails
+
+            # Find patterns that look like hex-encoded bytes, possibly from XOR.
+            # This regex is an example and might need adjustment based on actual obfuscated code patterns.
+            cleaned_code = re.sub(r'(\\[xX][0-9a-fA-F]{2})+', decode_xor_string, cleaned_code)
+            output.append("- Applied basic XOR decoding (attempted with a guessed key, highly specific to patterns).")
+
+        # Add more custom technique placeholders here, e.g., Base64, simple integer obfuscations.
 
     output.append("\n--- Cleaned Code (formatted) ---")
     # Apply beautify_lua after all cleaning attempts
