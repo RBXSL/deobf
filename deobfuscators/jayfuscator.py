@@ -122,4 +122,4 @@ def deobf_jayfuscator(code: str) -> str:
                            "complex proxying, and deeper string decryption may require a Lua AST parser, "
                            "execution analysis, or custom decryption algorithms specific to obfuscator versions.")
 
-    return "\n".join(output_messages) + f"\n\n{cleaned_code}
+    return "\n".join(output_messages) + f"\n\n{cleaned_code}"
