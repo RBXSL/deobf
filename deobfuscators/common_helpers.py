@@ -138,7 +138,7 @@ def _decode_hex_strings(code: str) -> str:
         hex_str = match.group(1)
         try:
             return codecs.decode(hex_str, 'hex').decode('utf-8', errors='ignore')
-        except: 
+        except Exception: 
             return match.group(0) # Return original if decoding fails
     
     code = re.sub(r'%x([0-9a-fA-F]{2})', replace_hex_percent, code)
@@ -157,7 +157,7 @@ def _decode_base64_strings(code: str) -> str:
             if re.match(r'^\s*(local|function|if|while|for|repeat)', unescaped_decoded_str.strip()):
                 return f"--- DECODED_BASE64_START ---\n{unescaped_decoded_str}\n--- DECODED_BASE64_END ---"
             return f'"{unescaped_decoded_str}"'
-        except:
+        except Exception:
             return match.group(0)
     
     return re.sub(r'(?:loadstring|rawset|setfenv)\s*\(\s*["\"]([a-zA-Z0-9+/=]+)["\"]\s*\)', replace_base64, code)
@@ -188,7 +188,7 @@ def _remove_wrapper_functions(code: str) -> str:
     especially those returning a large obfuscated function.
     """
     # Regex for Moonsec V3 initial wrapper
-    code = re.sub(r'^\s*--\[\[This file was protected with MoonSec V3\]\]:gsub\(\".+\", \(function\(a\) __xirluziHIZB = a; end\)\);\s*', '', code, flags=re.MULTILINE)
+    code = re.sub(r'^\s*--\[\[This file was protected with MoonSec V3\]\]:gsub\(".+", \(function\(a\) __xirluziHIZB = a; end\)\);\s*', '', code, flags=re.MULTILINE)
     
     # Pattern for the main return(function(...) ... end) wrapper
     match = re.search(r'return\s*\(function\s*\(t,.*?\)\s*(.*)\s*end\)\)\s*$', code, flags=re.DOTALL)
@@ -223,4 +223,4 @@ def _decode_xor_string_basic(code: str) -> str:
     # Target patterns that look like hex-encoded strings being passed to an XOR function or being
     # defined directly with hex escapes.
     code = re.sub(r'["\']((\\x[0-9a-fA-F]{2})+)+["\']', decode_xor, code)
-    return cod
+    return code
