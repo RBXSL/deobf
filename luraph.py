@@ -1,4 +1,3 @@
-python
 import re
 import codecs
 import base64
