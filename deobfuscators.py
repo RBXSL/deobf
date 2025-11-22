@@ -37,7 +37,7 @@ def deobf_constant_dump(code: str) -> str:
     """
     output = ["--- Constant and Function Dump ---"]
 
-    string_constants = re.findall(r'local \w+\s*=\s*(".*?"|\".*?\")', code)
+    string_constants = re.findall(r'local \w+\s*=\s*(".*?"|".*?")', code)
     if string_constants:
         output.append("\n**String Constants Found:**")
         for const in sorted(list(set(string_constants))):
@@ -78,7 +78,7 @@ def _unescape_lua_string(text: str) -> str:
         return text
 
 def _decode_hex_strings(code: str) -> str:
-    """Decodes common hex-encoded string patterns (e.g., \\xXX, %xXX)"""
+    """Decodes common hex-encoded string patterns (e.g., \xXX, %xXX)"""
     def replace_hex(match):
         hex_str = match.group(1) or match.group(2)
         try:
@@ -110,8 +110,8 @@ def _decode_unicode_escapes(code: str) -> str:
 
 def _resolve_string_concatenation(code: str) -> str:
     """Resolves simple 'a' .. 'b' patterns into 'ab'."""
-    code = re.sub(r'("(.*?)")\s*\.\.\s*("(.*?)")', lambda m: f'"{m.group(2)}{m.group(4)}"', code)
-    code = re.sub(r"(\\'(.*?)\"')\s*\.\.\s*(\\'(.*?)\"')", lambda m: f"'{m.group(2)}{m.group(4)}'", code)
+    code = re.sub(r'(".*?")\s*\.\.\s*(".*?")', lambda m: f'"{m.group(1)}{m.group(2)}"', code)
+    code = re.sub(r"('(.*?)')\s*\.\.\s*('(.*?)')", lambda m: f"'{m.group(2)}{m.group(4)}'", code)
     return code
 
 def _remove_simple_dead_code(code: str) -> str:
@@ -173,9 +173,8 @@ def deobf_moonsec_v3(code: str) -> str:
     output_messages.append("- Applied enhanced string/escape decoding and environment cleanup.")
     output_messages.append("- Applied basic formatting.")
 
-    return f"--- Moonsec v3 Deobfuscation (Heuristic Clean-up) ---
-" + \
-           "\n".join(output_messages) + \
+    return f"--- Moonsec v3 Deobfuscation (Heuristic Clean-up) ---\n"
+           f"\n".join(output_messages) +
            f"\n\n{cleaned_code}"
 
 def deobf_jayfuscator(code: str) -> str:
@@ -189,9 +188,7 @@ def deobf_jayfuscator(code: str) -> str:
     cleaned_code = _decode_hex_strings(cleaned_code)
     cleaned_code = _decode_unicode_escapes(cleaned_code)
     cleaned_code = _resolve_string_concatenation(cleaned_code)
-    return f"--- Jayfuscator Deobfuscation (Basic Clean-up) ---
-
-{cleaned_code}"
+    return f"--- Jayfuscator Deobfuscation (Basic Clean-up) ---\n\n{cleaned_code}"
 
 def deobf_luraph(code: str) -> str:
     """
@@ -204,18 +201,16 @@ def deobf_luraph(code: str) -> str:
     cleaned_code = _decode_hex_strings(cleaned_code)
     cleaned_code = _decode_unicode_escapes(cleaned_code)
     cleaned_code = _resolve_string_concatenation(cleaned_code)
-    return f"--- Luraph Deobfuscation (Basic Clean-up) ---
-
-{cleaned_code}"
+    return f"--- Luraph Deobfuscation (Basic Clean-up) ---\n\n{cleaned_code}"
 
 def deobf_custom(code: str, keywords: list = None, techniques: list = None) -> str:
     """
     Applies custom deobfuscation logic based on selected techniques and searches for keywords.
     Supported techniques (via 'techniques' list):
     - 'wrapper_remove': Attempts to remove top-level obfuscator wrapper functions.
-    - 'hex_decode': Decodes common hex-encoded strings (e.g., \\xXX, %xXX).
+    - 'hex_decode': Decodes common hex-encoded strings (e.g., \xXX, %xXX).
     - 'base64_decode': Decodes base64-encoded strings, especially within loadstring.
-    - 'unicode_decode': Decodes common unicode/escape sequences (e.g., \\uXXXX, \\DDD).
+    - 'unicode_decode': Decodes common unicode/escape sequences (e.g., \uXXXX, \DDD).
     - 'basic_string_concat': Resolves simple 'a' .. 'b' patterns into 'ab'.
     - 'xor_decode': Attempts a very basic XOR decoding (requires pattern matching).
     - 'dead_code_remove': Removes very simple patterns of dead/junk code.
@@ -266,7 +261,7 @@ def deobf_custom(code: str, keywords: list = None, techniques: list = None) -> s
                 except Exception:
                     return match.group(0)
 
-            cleaned_code = re.sub(r'(\\[xX][0-9a-fA-F]{2})+', decode_xor_string, cleaned_code)
+            cleaned_code = re.sub(r'(\[xX][0-9a-fA-F]{2})+', decode_xor_string, cleaned_code)
             output.append("- Applied basic XOR decoding (attempted with a guessed key, highly specific to patterns).")
 
         if "dead_code_remove" in techniques:
