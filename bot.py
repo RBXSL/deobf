@@ -70,7 +70,7 @@ class CustomDeobfModal(discord.ui.Modal, title="Custom Deobfuscation Options"):
     )
     techniques_input = discord.ui.TextInput(
         label="Techniques (comma-separated)",
-        placeholder="Available: hex_decode, base64_decode, unicode_decode, basic_string_concat, xor_decode, dead_code_remove",
+        placeholder="Available: beautify, constant_dump, wrapper_remove, hex_decode, base64_decode, unicode_decode, basic_string_concat, xor_decode, dead_code_remove, simplify_fenv",
         required=False,
         max_length=500
     )
@@ -164,7 +164,7 @@ async def on_message(message: discord.Message):
         return
 
     user_id = message.author.id
-    if user_id in bot.waiting_for_url and message.channel.id == bot.waiting_for_url[user_id]["channel_id"]:
+    if user_id in bot.waiting_for_url and message.channel.id == bot.bot.waiting_for_url[user_id]["channel_id"]:
         url = message.content.strip()
         method = bot.waiting_for_url[user_id]["method"]
         keywords = bot.waiting_for_url[user_id].get("keywords")
