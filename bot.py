@@ -1,14 +1,35 @@
-mport discord
+import discord
 import os
 import aiohttp
 from discord.ext import commands
 from dotenv import load_dotenv
+import threading
+from http.server import HTTPServer, BaseHTTPRequestHandler
 
 from deobfuscators import deobf_moonsec_v3, deobf_jayfuscator, deobf_luraph, deobf_constant_dump, deobf_custom
 
 # Load environment variables from .env file
 load_dotenv()
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
+PORT = int(os.getenv("PORT", 10000))
+
+# --- Simple HTTP Server for Render Health Checks ---
+class HealthCheckHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        if self.path == '/health':
+            self.send_response(200)
+            self.send_header('Content-type', 'text/plain')
+            self.end_headers()
+            self.wfile.write(b'OK')
+        else:
+            self.send_response(404)
+            self.end_headers()
+
+def run_http_server():
+    with HTTPServer(("", PORT), HealthCheckHandler) as httpd:
+        print(f"HTTP server listening on port {PORT} for health checks...")
+        httpd.serve_forever()
+# ----------------------------------------------------
 
 # Set up bot intents
 intents = discord.Intents.default()
@@ -135,8 +156,7 @@ async def on_ready():
 @bot.command(name="deobf", help="Starts the Lua/Luau deobfuscation process.")
 async def deobf_command(ctx: commands.Context):
     """Sends a menu with deobfuscation options."""
-    view = DeobfView()
-    view.bot = bot # Pass bot instance to the view for access in callbacks
+    view = DeobfView(bot)
     await ctx.send("What kind of deobfuscation do you want to perform?", view=view)
 
 @bot.event
@@ -193,4 +213,8 @@ if __name__ == "__main__":
     if not DISCORD_TOKEN:
         print("Error: DISCORD_TOKEN not found. Please set it as an environment variable (e.g., in Render).")
     else:
+        # Start the health check server in a background thread
+        http_thread = threading.Thread(target=run_http_server, daemon=True)
+        http_thread.start()
+
         bot.run(DISCORD_TOKEN)
