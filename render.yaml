@@ -1,10 +1,15 @@
 # render.yaml
 services:
-  - type: worker
+  - type: web # Changed from worker to web
     name: deobfuscator-bot
     env: python
+    plan: free # Or your desired plan
     buildCommand: "pip install -r requirements.txt"
     startCommand: "python bot.py"
+    healthCheckPath: /health # Added for web service health checks
     envVars:
       - key: DISCORD_TOKEN
-        sync: false # Set this to 'true' if you want to sync changes from Render dashboard to git
+        sync: false
+      - key: PORT
+        value: 10000 # Default port for Render web services
+        
