@@ -138,4 +138,4 @@ def deobf_luraph(code: str) -> str:
                            "execution analysis, and potentially custom VM emulation, which is beyond the scope of "
                            "pure regex and string manipulation.")
 
-    return "\n".join(output_messages) + f"\n\n{cleaned_code}"
+    return "\n".join(output_messages) + f"\n\n{cleaned_code}
