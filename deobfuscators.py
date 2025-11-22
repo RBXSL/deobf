@@ -67,9 +67,11 @@ def deobf_constant_dump(code: str) -> str:
     return "\n".join(output)
 
 def deobf_moonsec_v3(code: str) -> str:
-    """Placeholder for Moonsec v3 deobfuscation logic."""
-    # Real Moonsec v3 deobfuscation is complex and often involves bytecode analysis
-    # This is a very basic attempt to clean common Lua obfuscation patterns.
+    """
+    Placeholder for Moonsec v3 deobfuscation logic.
+    Real Moonsec v3 deobfuscation is complex and often involves bytecode analysis or specific VM understanding.
+    This function currently applies basic formatting and common cleanup patterns.
+    """
     cleaned_code = beautify_lua(code)
 
     # Example: Simple hex string decoding pattern (common in some obfuscators)
@@ -85,24 +87,32 @@ def deobf_moonsec_v3(code: str) -> str:
     return f"--- Moonsec v3 Deobfuscation (Basic Clean-up) ---\n\n{cleaned_code}"
 
 def deobf_jayfuscator(code: str) -> str:
-    """Placeholder for Jayfuscator deobfuscation logic."""
-    # Jayfuscator uses techniques like string encryption, control flow flattening, and VM.
-    # A full deobfuscator would require significant reverse engineering.
+    """
+    Placeholder for Jayfuscator deobfuscation logic.
+    Jayfuscator uses techniques like string encryption, control flow flattening, and VM.
+    A full deobfuscator would require significant reverse engineering.
+    This function currently applies basic formatting.
+    """
     cleaned_code = beautify_lua(code)
     # Add specific Jayfuscator common patterns here if identified
     return f"--- Jayfuscator Deobfuscation (Basic Clean-up) ---\n\n{cleaned_code}"
 
 def deobf_luraph(code: str) -> str:
-    """Placeholder for Luraph deobfuscation logic."""
-    # Luraph is a very strong commercial obfuscator, often involving custom VMs.
-    # Full deobfuscation is extremely difficult without specialized tools or exploits.
+    """
+    Placeholder for Luraph deobfuscation logic.
+    Luraph is a very strong commercial obfuscator, often involving custom VMs.
+    Full deobfuscation is extremely difficult without specialized tools or exploits.
+    This function currently applies basic formatting.
+    """
     cleaned_code = beautify_lua(code)
     # Add specific Luraph common patterns here if identified
     return f"--- Luraph Deobfuscation (Basic Clean-up) ---\n\n{cleaned_code}"
 
 def deobf_custom(code: str, keywords: list = None, techniques: list = None) -> str:
     """
-    Placeholder for custom deobfuscation logic based on selected techniques.
+    Applies custom deobfuscation logic based on selected techniques and searches for keywords.
+    Currently supports: 'hex_decode', 'basic_string_concat', and 'xor_decode' (placeholder).
+    More advanced techniques (VM, function tables) would require dedicated parsers/engines.
     """
     output = [f"--- Custom Deobfuscation ---"]
     output.append(f"Selected techniques: {', '.join(techniques) if techniques else 'None specified'}")
@@ -111,7 +121,7 @@ def deobf_custom(code: str, keywords: list = None, techniques: list = None) -> s
     cleaned_code = code
 
     if techniques:
-        # Apply selected techniques (placeholders for now)
+        # Apply selected techniques
         if "hex_decode" in techniques:
             def decode_hex_string(match):
                 hex_str = match.group(1).replace('\\x', '')
@@ -124,13 +134,21 @@ def deobf_custom(code: str, keywords: list = None, techniques: list = None) -> s
 
         if "basic_string_concat" in techniques:
             # Example: "a" .. "b" -> "ab"
-            cleaned_code = re.sub(r'\"(.*?)\"\s*\.\.\s*\"(.*?)\" ', r'"\1\2"', cleaned_code)
+            # This is a simple regex and won't handle all cases (e.g., variables)
+            cleaned_code = re.sub(r'"(.*?)"\s*\.\.\s*"(.*?)"', r'"\1\2"', cleaned_code)
             output.append("- Applied basic string concatenation resolution.")
+
+        if "xor_decode" in techniques:
+            # Placeholder for XOR decoding. This is highly dependent on the specific XOR pattern (key, loop, etc.)
+            # A real implementation would need to parse the XOR logic.
+            output.append("- Attempted XOR decoding (placeholder: needs specific XOR logic).")
 
         # Add more custom technique placeholders here
 
-    output.append("\n--- Cleaned Code ---")
-    output.append(beautify_lua(cleaned_code))
+    output.append("\n--- Cleaned Code (formatted) ---")
+    # Apply beautify_lua after all cleaning attempts
+    cleaned_code = beautify_lua(cleaned_code)
+    output.append(cleaned_code)
 
     if keywords:
         found_keywords = []
