@@ -60,7 +60,6 @@ async def deobfuscate_code(source_code: str, method: str, keywords: list = None,
         return deobf_custom(source_code, keywords, techniques)
     else:
         return f"--- Unknown Deobfuscation Method: {method} ---\n\n{source_code}"
-"
 
 class CustomDeobfModal(discord.ui.Modal, title="Custom Deobfuscation Options"):
     keywords_input = discord.ui.TextInput(
@@ -173,7 +172,7 @@ async def on_message(message: discord.Message):
         del bot.waiting_for_url[user_id] # Clear the waiting state
 
         if not (url.startswith("http://") or url.startswith("https://")):
-            await message.channel.send("That doesn't look like a valid URL. Please try again with a valid URL.", ephemeral=True)
+            await message.channel.send("That doesn\'t look like a valid URL. Please try again with a valid URL.", ephemeral=True)
             return
 
         await message.channel.send(f"Fetching code from {url} for {method} deobfuscation...")
@@ -188,7 +187,7 @@ async def on_message(message: discord.Message):
 
                         if len(deobfuscated_code) > 1900: # Discord message limit is 2000 chars
                             # Ensure the directory for temporary files exists or use a more robust temp file method
-                            temp_dir = "/tmp" # Or use the project's temp directory if available
+                            temp_dir = "/tmp" # Or use the project\'s temp directory if available
                             temp_file_path = os.path.join(temp_dir, f"{message.author.id}_deobf_output.lua")
 
                             with open(temp_file_path, "w", encoding="utf-8") as f:
