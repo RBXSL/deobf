@@ -70,7 +70,7 @@ class CustomDeobfModal(discord.ui.Modal, title="Custom Deobfuscation Options"):
     )
     techniques_input = discord.ui.TextInput(
         label="Techniques (comma-separated)",
-        placeholder="Available: hex_decode, basic_string_concat",
+        placeholder="Available: hex_decode, basic_string_concat, xor_decode",
         required=False,
         max_length=500
     )
