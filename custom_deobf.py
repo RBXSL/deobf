@@ -1,4 +1,3 @@
-python
 from .common_helpers import (
     beautify_lua,
     deobf_constant_dump,
