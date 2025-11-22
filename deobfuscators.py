@@ -125,7 +125,7 @@ def _unescape_lua_string_safe(text: str) -> str:
         r'|\\u([0-9a-fA-F]{4})'       # Unicode escapes \uXXXX
         r'|\\u\{([0-9a-fA-F]+)\}'     # Unicode escapes \u{XXXX}
         r'|\\([0-9]{1,3})'            # Octal escapes \DDD (up to 3 digits)
-        r'|\\([abfnrtv\\"\'])'        # Standard single-char escapes
+        r'|\\([abfnrtv\\\'"])'        # Standard single-char escapes
     )
     
     return pattern.sub(replace_match, text)
@@ -354,4 +354,4 @@ def deobf_custom(code: str, keywords: list = None, techniques: list = None) -> s
             output.append("\n--- Keywords Search ---")
             output.append("No specified keywords found in the cleaned code.")
 
-    return "\n".join(output)<ctrl46>}
+    return "\n".join(output)
